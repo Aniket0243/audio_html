@@ -1,0 +1,146 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>Audio Player</title>
+<style>
+body {
+  font-family: Arial, sans-serif;
+  margin: 20px;
+}
+.container {
+  border: 1px solid #ddd;
+  border-radius: 8px;
+  padding: 20px;
+  max-width: 700px;
+}
+button {
+  padding: 6px 12px;
+  margin: 5px 2px;
+  border: 1px solid #ccc;
+  border-radius: 6px;
+  background: #fff;
+  cursor: pointer;
+}
+button:hover {
+  background: #f0f0f0;
+}
+input[type=range] {
+  vertical-align: middle;
+}
+.tag {
+  display: inline-block;
+  background: #e6e6ff;
+  color: #333;
+  padding: 4px 10px;
+  border-radius: 20px;
+  margin: 2px;
+  font-size: 0.9em;
+}
+code {
+  background: #f0f0f0;
+  padding: 2px 4px;
+  border-radius: 4px;
+}
+</style>
+</head>
+<body>
+
+<h2>HTML <code>&lt;audio&gt;</code> AUDIO PLAYER </h2>
+
+<div class="container">
+  <p>Below is an <code>&lt;audio&gt;</code> element using multiple <code>&lt;source&gt;</code> fallbacks. Use the buttons to control playback with JavaScript.</p>
+  
+  <audio id="myAudio" controls>
+
+    <source src="C:\Users\hp\Downloads\song1.mp3" type="audio/mpeg">
+    <source src="C:\Users\hp\Downloads\song2.mp3" type="audio/ogg">
+    Your browser does not support the audio element.
+  </audio>
+
+  <div style="margin-top:10px;">
+    <button onclick="playAudio()">Play</button>
+    <button onclick="pauseAudio()">Pause</button>
+    <button onclick="stopAudio()">Stop</button>
+    Seek <input type="range" id="seekBar" value="0" step="1">
+    Volume <input type="range" id="volumeBar" min="0" max="1" step="0.01" value="1">
+  </div>
+
+  <p><strong>State:</strong> <span id="state">stopped</span> — 
+     <strong>Time:</strong> <span id="time">0:00 / 0:00</span></p>
+
+  <p><strong>Supported <code>&lt;audio&gt;</code> attributes &amp; inner tags shown:</strong></p>
+  <span class="tag">controls</span>
+  <span class="tag">autoplay</span>
+  <span class="tag">loop</span>
+  <span class="tag">muted</span>
+  <span class="tag">preload</span>
+  <span class="tag">src</span>
+  <span class="tag">&lt;source&gt;</span>
+  <span class="tag">&lt;track&gt; (captions/subtitles)</span>
+  <span class="tag">fallback text</span>
+
+  <h4>Notes:</h4>
+  <ul>
+    <li><code>&lt;source&gt;</code> lets you provide the same audio in different formats (mp3, ogg, wav).</li>
+    <li><code>&lt;track&gt;</code> is used for captions/subtitles in WebVTT format.</li>
+    <li><code>preload</code> values: <code>none</code>, <code>metadata</code>, <code>auto</code>.</li>
+  </ul>
+</div>
+
+<script>
+const audio = document.getElementById('myAudio');
+const stateDisplay = document.getElementById('state');
+const timeDisplay = document.getElementById('time');
+const seekBar = document.getElementById('seekBar');
+const volumeBar = document.getElementById('volumeBar');
+
+function playAudio() {
+  audio.play();
+  stateDisplay.textContent = 'playing';
+}
+
+function pauseAudio() {
+  audio.pause();
+  stateDisplay.textContent = 'paused';
+}
+
+function stopAudio() {
+  audio.pause();
+  audio.currentTime = 0;
+  stateDisplay.textContent = 'stopped';
+}
+
+audio.addEventListener('loadedmetadata', () => {
+  seekBar.max = Math.floor(audio.duration);
+  updateTime();
+});
+
+audio.addEventListener('timeupdate', () => {
+  seekBar.value = Math.floor(audio.currentTime);
+  updateTime();
+});
+
+seekBar.addEventListener('input', () => {
+  audio.currentTime = seekBar.value;
+});
+
+volumeBar.addEventListener('input', () => {
+  audio.volume = volumeBar.value;
+});
+
+function updateTime() {
+  const current = formatTime(audio.currentTime);
+  const total = formatTime(audio.duration);
+  timeDisplay.textContent = `${current} / ${total}`;
+}
+
+function formatTime(seconds) {
+  const min = Math.floor(seconds / 60) || 0;
+  const sec = Math.floor(seconds % 60) || 0;
+  return `${min}:${sec.toString().padStart(2, '0')}`;
+}
+</script>
+
+</body>
+</html>
